@@ -1,0 +1,9 @@
+### VS Code
+export
+export/*
+.vscode/*
+.haxelib/
+*.code-workspace
+.history
+.ionide
+.vscode
