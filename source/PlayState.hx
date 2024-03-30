@@ -9,6 +9,7 @@ import flixel.util.FlxColor;
 import flixel.text.FlxText;
 import flixel.FlxState;
 import lime.app.Application;
+import WinUtil;
 
 class PlayState extends MusicState
 {
@@ -19,6 +20,10 @@ class PlayState extends MusicState
 	override public function create()
 	{
 		super.create();
+
+		#if (windows && cpp)
+		WinUtil.setDarkMode(true);
+		#end
 
 		playMusic('MainMusic', 1, true);
 
@@ -38,7 +43,7 @@ class PlayState extends MusicState
 		currentTime.borderColor = FlxColor.BLACK;
 		add(currentTime);
 
-		versionTxt = new FlxText(10,475,0,"Version • " + Application.current.meta.get('version'), 20);
+		versionTxt = new FlxText(10, 475, 0, "Version • " + Application.current.meta.get('version'), 20);
 		versionTxt.font = 'assets/fonts/vcr.ttf';
 		versionTxt.alignment = CENTER;
 		add(versionTxt);
@@ -47,7 +52,8 @@ class PlayState extends MusicState
 		{
 			mute();
 		});
-
+		muteButton.color = FlxG.sound.muted ? FlxColor.RED : FlxColor.WHITE;
+		save();
 		add(muteButton);
 	}
 
@@ -55,20 +61,15 @@ class PlayState extends MusicState
 	{
 		super.update(elapsed);
 
+		if (FlxG.keys.justPressed.PLUS || FlxG.keys.justPressed.MINUS)
+			save();
 		currentTime.text = DateTools.format(Date.now(), "%r");
 	}
 
-	function mute()
+	private function mute()
 	{
-		if (FlxG.sound.muted == false)
-		{
-			FlxG.sound.muted = true;
-			muteButton.color = FlxColor.RED;
-		}
-		else if(FlxG.sound.muted == true)
-		{	
-			FlxG.sound.muted = false;
-			muteButton.color = FlxColor.WHITE;
-		}
+		FlxG.sound.muted = !FlxG.sound.muted;
+		muteButton.color = FlxG.sound.muted ? FlxColor.RED : FlxColor.WHITE;
+		save();
 	}
 }
